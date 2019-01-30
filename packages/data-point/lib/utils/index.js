@@ -9,15 +9,24 @@ const util = require('util')
  * @param {*} value
  */
 function set (target, key, value) {
-  const obj = {}
+  // const obj = {}
+  // obj[key] = value
+  // return Object.assign({}, target, obj)
+  const obj = Object.create(target)
   obj[key] = value
-  return Object.assign({}, target, obj)
+  return obj
 }
 
 module.exports.set = set
 
 function assign (target, toMerge) {
-  return Object.assign({}, target, toMerge)
+  const obj = Object.create(target)
+  for (const key in toMerge) {
+    if (toMerge.hasOwnProperty(key)) {
+      obj[key] = toMerge[key]
+    }
+  }
+  return obj
 }
 
 module.exports.assign = assign

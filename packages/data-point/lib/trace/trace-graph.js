@@ -104,24 +104,27 @@ module.exports.logGraph = logGraph
 /**
  * @param {Array<TraceNode>} traceGraph raw stack to write to disk
  */
-function writeTraceGraph (traceGraph) {
+function getTraceTree (traceGraph) {
   const root = traceGraph.find(node => !node.parent)
   const graphAcc = { timeStartNs: root.timeStartNs, maxNestingLevel: 0 }
   createTree(root, traceGraph, 0, graphAcc)
   root.maxNestingLevel = graphAcc.maxNestingLevel
+  return root
+}
 
+module.exports.getTraceTree = getTraceTree
+
+function writeToFile (traceGraph) {
   const date = Date.now()
   return module.exports.writeFileP(
     `data-point-trace-${date}.json`,
-    stringify(root, null, '  '),
+    stringify(traceGraph, null, '  '),
     'utf8'
   )
 }
 
-module.exports.writeTraceGraph = writeTraceGraph
-
-function traceReducer (acc) {
-  return writeTraceGraph(acc.traceGraph).return(acc)
+function writeTraceTree (acc) {
+  return writeToFile(getTraceTree(acc.traceNodeStack)).return(acc)
 }
 
-module.exports.traceReducer = traceReducer
+module.exports.writeTraceTree = writeTraceTree

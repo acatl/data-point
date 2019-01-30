@@ -31,13 +31,10 @@ function reducerResolve (manager, reducerSource, value, options) {
     value: value,
     locals: contextOptions.locals,
     entityOverrides: contextOptions.entityOverrides,
-    trace: contextOptions.trace,
     values: manager.values.getStore()
   })
 
-  const result = resolveFromAccumulator(manager, reducerSource, context)
-
-  return !context.trace ? result : result.then(Trace.traceReducer)
+  return resolveFromAccumulator(manager, reducerSource, context)
 }
 
 function transform (manager, reducerSource, value, options, done) {

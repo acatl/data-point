@@ -43,7 +43,8 @@ const ResidentModel = Model('Resident', {
     {
       name: '$name',
       gender: '$gender',
-      birthYear: '$birth_year'
+      birthYear: '$birth_year',
+      trace: (i, a) => a.trace()
     }
   ]
 })
@@ -75,7 +76,7 @@ const input = {
 // mock request calls
 mocks()
 
-dataPoint.resolve(PlanetModel, input).then(output => {
+dataPoint.transform(PlanetModel, input).then(output => {
   console.log(output)
   /*
     output ->

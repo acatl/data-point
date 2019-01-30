@@ -14,7 +14,7 @@ function resolve (manager, resolveReducer, accumulator, reducerParallel) {
     return resolveReducer(manager, accumulator, reducer)
   }).then(result => {
     const value = result.map(acc => acc.value)
-    return utils.assign(accumulator, { value })
+    return utils.set(accumulator, 'value', value)
   })
 }
 

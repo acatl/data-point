@@ -47,7 +47,7 @@ function resolveOptions (accumulator, resolveReducer) {
   const specOptions = accumulator.reducer.spec.options
   return resolveReducer(accumulator, specOptions).then(acc => {
     const options = getRequestOptions(url, acc.value)
-    return utils.assign(accumulator, { options })
+    return utils.set(accumulator, 'options', options)
   })
 }
 

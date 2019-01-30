@@ -79,9 +79,7 @@ function handleByPassError (error) {
  */
 function getCurrentReducer (reducer, entity) {
   if (!reducer.spec) {
-    return utils.assign(reducer, {
-      spec: entity
-    })
+    return utils.set(reducer, 'spec', entity)
   }
 
   return reducer
@@ -101,15 +99,13 @@ function createCurrentAccumulator (accumulator, reducer, entity) {
   const uid = `${entityId}:${utils.getUID()}`
 
   // create accumulator to resolve
-  const currentAccumulator = utils.assign(accumulator, {
-    uid: uid,
-    context: entity,
-    reducer: currentReducer,
-    initialValue: accumulator.value,
-    params: assignParamsHelper(accumulator, entity),
-    debug: debugEntity(reducer.entityType)
-  })
-
+  const currentAccumulator = Object.create(accumulator)
+  currentAccumulator.uid = uid
+  currentAccumulator.context = entity
+  currentAccumulator.reducer = currentReducer
+  currentAccumulator.initialValue = accumulator.value
+  currentAccumulator.params = assignParamsHelper(accumulator, entity)
+  currentAccumulator.debug = debugEntity(reducer.entityType)
   return currentAccumulator
 }
 

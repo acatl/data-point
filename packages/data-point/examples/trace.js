@@ -14,16 +14,33 @@ const PersonModel = Model('PersonModel', {
   value: {
     name: '$name',
     birthYear: '$birth_year'
-  }
+  },
+  after: [
+    {
+      a: (input, acc) => {
+        // throw new Error(`A-${acc.traceNode.id}`)
+        return true
+      },
+      b: function bbb (input, acc) {
+        console.log(acc.trace())
+        return true
+      }
+    }
+  ]
+  // error: (error, acc) => {
+  //   console.log('CATCH', error.reducerStack)
+  // }
 })
 
 const options = {
-  trace: false // <-- set to true to enable tracing, a file will be created
+  trace: true // <-- set to true to enable tracing, a file will be created
 }
 
 const dataPoint = DataPoint.create()
 
-dataPoint.transform([PersonRequest, PersonModel], 1, options).then(output => {
+dataPoint.transform([PersonRequest, PersonModel], 1, options)
+.then(output => {
+  return output
   /*
     a file with the name data-point-trace-<timestamp>.json will
     be created.
@@ -65,4 +82,10 @@ dataPoint.transform([PersonRequest, PersonModel], 1, options).then(output => {
           "children": [
               .....
   */
+})
+.then(acc => {
+  console.log(acc.getTraceTree())
+})
+.catch(error => {
+  console.log(error.reducerStack)
 })

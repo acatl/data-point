@@ -1,5 +1,6 @@
 const merge = require('lodash/merge')
 const debug = require('debug')('data-point')
+const Trace = require('../trace')
 
 /**
  * @class
@@ -9,20 +10,50 @@ function Accumulator () {
   this.locals = undefined
   this.values = undefined
   this.reducer = undefined
-  this.trace = false
   this.context = undefined
-  this.traceGraph = []
+  this.traceNode = undefined
+  this.traceNodeStack = []
+  this.reducerStack = []
+
+  this.traceNodeGraph = function traceNodeGraph () {
+    return Trace.getTraceTree(this.traceNodeStack)
+  }
+
+  this.trace = function trace () {
+    return this.reducerStack.reverse()
+  }
 }
 
 module.exports.Accumulator = Accumulator
 
+function createAccumulator () {
+  return {
+    value: undefined,
+    locals: undefined,
+    values: undefined,
+    reducer: undefined,
+    context: undefined,
+    traceNode: undefined,
+    traceNodeStack: [],
+    reducerStack: [],
+
+    traceNodeGraph () {
+      return Trace.getTraceTree(this.traceNodeStack)
+    },
+
+    trace () {
+      return this.reducerStack.reverse()
+    }
+  }
+}
+
 /**
  * creates new Accumulator based on spec
- * @param  {Object} spec - acumulator spec
+ * @param  {Object} spec - accumulator spec
  * @return {Source}
  */
 function create (spec) {
-  const accumulator = new Accumulator()
+  const accumulator = createAccumulator()
 
   accumulator.value = spec.value
   accumulator.context = spec.context
@@ -32,9 +63,7 @@ function create (spec) {
   accumulator.entityOverrides = merge({}, spec.entityOverrides)
   accumulator.locals = merge({}, spec.locals)
   accumulator.values = spec.values
-  accumulator.trace = spec.trace
   accumulator.debug = debug
-
   return accumulator
 }
 

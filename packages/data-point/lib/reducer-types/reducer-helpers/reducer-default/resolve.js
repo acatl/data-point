@@ -12,7 +12,7 @@ function resolve (accumulator, _default) {
     value = typeof _default === 'function' ? _default() : _default
   }
 
-  return utils.assign(accumulator, { value })
+  return utils.set(accumulator, 'value', value)
 }
 
 module.exports.resolve = resolve

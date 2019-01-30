@@ -56,24 +56,25 @@ function getResolveFunction (reducer) {
  */
 function resolveReducer (manager, accumulator, reducer) {
   // this conditional is here because BaseEntity#resolve
-  // does not check that lifecycle methods are defined
+  // does not check that life-cycle methods are defined
   // before trying to resolve them
   if (!reducer) {
     return Promise.resolve(accumulator)
   }
 
-  const isTracing = accumulator.trace
-
-  const acc = isTracing
-    ? trace.augmentAccumulatorTrace(accumulator, reducer)
-    : accumulator
-
+  const acc = trace.augmentAccumulatorTrace(accumulator, reducer)
   const traceNode = acc.traceNode
-
   const resolve = getResolveFunction(reducer)
 
   // NOTE: recursive call
   let result = resolve(manager, resolveReducer, acc, reducer)
+
+  result.catch((error) => {
+    if (!error.reducerStack) {
+      error.reducerStack = []
+    }
+    error.reducerStack.push(acc.reducer)
+  })
 
   if (hasDefault(reducer)) {
     const _default = reducer[DEFAULT_VALUE].value
@@ -81,11 +82,7 @@ function resolveReducer (manager, accumulator, reducer) {
     result = result.then(acc => resolveDefault(acc, _default))
   }
 
-  if (isTracing) {
-    result = result.then(trace.augmentTraceNodeDuration(traceNode))
-  }
-
-  return result
+  return result.finally(trace.augmentTraceNodeDuration(traceNode))
 }
 
 module.exports.resolve = resolveReducer
