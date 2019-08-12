@@ -96,6 +96,8 @@ async function getMatchingCaseStatement(caseStatements, acc, resolveReducer) {
   while (statementIndex < caseStatements.length) {
     statement = caseStatements[statementIndex];
 
+    // we do purposely want to wait for each reducer to execute
+    // eslint-disable-next-line no-await-in-loop
     const caseValue = await resolveReducer(acc, statement.case);
 
     if (caseValue === true) {
@@ -103,7 +105,7 @@ async function getMatchingCaseStatement(caseStatements, acc, resolveReducer) {
       break;
     }
 
-    statementIndex++;
+    statementIndex += 1;
   }
 
   if (caseMatched) {

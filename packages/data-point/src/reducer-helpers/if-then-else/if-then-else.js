@@ -36,8 +36,8 @@ class ReducerIfThenElse extends Reducer {
     const resultIf = await resolveReducer(accumulator, statement.if);
 
     return resultIf
-      ? await await resolveReducer(accumulator, statement.then)
-      : await await resolveReducer(accumulator, statement.else);
+      ? resolveReducer(accumulator, statement.then)
+      : resolveReducer(accumulator, statement.else);
   }
 }
 

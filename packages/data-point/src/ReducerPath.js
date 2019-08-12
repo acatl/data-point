@@ -4,13 +4,15 @@ const { ReducerNative } = require("./ReducerNative");
 // https://gomakethings.com/how-to-get-the-value-of-an-object-from-a-specific-path-with-vanilla-js/
 // chris@gomakethings.com
 
+const splitToArrayRegEx = /\[([^}]+)\]/g;
+
 function stringToPath(path) {
   const output = [];
 
   // Split to an array with dot notation
-  path.split(".").forEach(function(item, index) {
+  path.split(".").forEach(item => {
     // Split to an array with bracket notation
-    item.split(/\[([^}]+)\]/g).forEach(function(key) {
+    item.split(splitToArrayRegEx).forEach(key => {
       // Push to the new array
       if (key.length > 0) {
         output.push(key);
@@ -22,11 +24,11 @@ function stringToPath(path) {
 }
 
 function getPath(value, path) {
-  var current = value;
+  let current = value;
 
   // For each item in the path, dig into the object
   const length = path.length;
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < length; i += 1) {
     // If the item isn't found, return undefined
     if (!current[path[i]]) return undefined;
 

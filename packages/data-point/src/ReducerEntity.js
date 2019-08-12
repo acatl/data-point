@@ -9,6 +9,7 @@ const { Reducer } = require("./Reducer");
  */
 function setReducerIfTruthy(name, target, spec) {
   if (spec[name]) {
+    // eslint-disable-next-line no-param-reassign
     target[name] = createReducer(spec[name]);
   }
 }
@@ -25,13 +26,15 @@ class ReducerEntity extends Reducer {
     setReducerIfTruthy("catch", this, spec);
 
     if (spec.inputType) {
-      const inputType = normalizeTypeCheckSource(spec.inputType);
-      this.inputType = createReducer(inputType);
+      // TODO: implement back
+      // const inputType = normalizeTypeCheckSource(spec.inputType);
+      this.inputType = createReducer(spec.inputType);
     }
 
     if (spec.outputType) {
-      const outputType = normalizeTypeCheckSource(spec.outputType);
-      this.outputType = createReducer(outputType);
+      // TODO: implement back
+      // const outputType = normalizeTypeCheckSource(spec.outputType);
+      this.outputType = createReducer(spec.outputType);
     }
 
     this.params = spec.params || {};
@@ -81,7 +84,7 @@ class ReducerEntity extends Reducer {
   }
 
   async resolveReducer(accumulator, resolveReducer) {
-    const acc = this.setAccumulatorContext(accumulator);
+    let acc = this.setAccumulatorContext(accumulator);
 
     try {
       acc.value = await this.resolveEntityValue(acc, resolveReducer);

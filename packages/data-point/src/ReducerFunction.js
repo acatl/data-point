@@ -12,7 +12,7 @@ class ReducerFunction extends ReducerNative {
   }
 
   async resolve(accumulator) {
-    return await this.functionBody(accumulator.value, accumulator);
+    return this.functionBody(accumulator.value, accumulator);
   }
 }
 

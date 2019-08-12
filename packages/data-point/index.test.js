@@ -1,4 +1,4 @@
-const { DataPoint, Model, ifThenElse, map, parallel } = require("./index");
+const { DataPoint, Model, ifThenElse, map } = require("./index");
 
 const myModel = Model({
   name: "myModel",
@@ -9,12 +9,12 @@ const myModel = Model({
 
   after: ifThenElse({
     if: input => input === "FOO",
-    then: input => "foo yes!",
+    then: () => "foo yes!",
     else: input => `foo no! got ${input}`
   }),
 
   catch: error => {
-    console.log(error);
+    console.log(error); // eslint-disable-line
     return "failed";
   },
 
@@ -27,14 +27,14 @@ const myModel = Model({
 async function main() {
   const datapoint = DataPoint();
 
-  let result;
+  // making the linter happy while I test this
+  let result = null;
 
   const cache = new Map();
 
   // cache hit/lookup
   datapoint.cache.get = (input, acc) => {
     const uid = acc.reducer.params.uid(acc);
-    const value = cache.get(uid);
     return cache.get(uid);
   };
 
@@ -77,7 +77,7 @@ async function main() {
 
   result = await datapoint.resolve(input, map(myModel));
 
-  console.log(result);
+  console.log(result); // eslint-disable-line
 }
 
 main();

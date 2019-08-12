@@ -31,9 +31,11 @@ class ReducerList extends ReducerNative {
       const acc = Object.create(accumulator);
       acc.value = value;
 
+      // we do purposely want to wait for each reducer to execute
+      // eslint-disable-next-line no-await-in-loop
       value = await resolveReducer(acc, reducer);
 
-      index++;
+      index += 1;
     }
 
     return value;

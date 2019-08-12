@@ -2,7 +2,8 @@ const { IS_REDUCER } = require("./reducer-symbols");
 
 let uid = 0;
 function uniqueId() {
-  return uid++;
+  uid += 1;
+  return uid;
 }
 
 class Reducer {
@@ -30,7 +31,7 @@ class Reducer {
 
   async resolveReducer(accumulator, resolveReducer) {
     const acc = this.setAccumulatorContext(accumulator);
-    return await this.resolve(acc, resolveReducer);
+    return this.resolve(acc, resolveReducer);
   }
 }
 
