@@ -1,21 +1,21 @@
-const { ReducerNative } = require('./ReducerNative')
+const { ReducerNative } = require("./ReducerNative");
 
 class ReducerFunction extends ReducerNative {
   constructor(spec) {
-    super('function', spec.name, spec)
+    super("function", spec.name, spec);
 
-    this.functionBody = spec
+    this.functionBody = spec;
   }
 
   static isType(spec) {
-    return typeof spec === 'function'
+    return typeof spec === "function";
   }
 
   async resolve(accumulator) {
-    return await this.functionBody(accumulator.value, accumulator)
+    return await this.functionBody(accumulator.value, accumulator);
   }
 }
 
 module.exports = {
   ReducerFunction
-}
+};

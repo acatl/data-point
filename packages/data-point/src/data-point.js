@@ -1,5 +1,5 @@
 const { createReducer } = require("./create-reducer");
-const Accumulator = require("./accumulator");
+const Accumulator = require("./Accumulator");
 const Resolve = require("./resolve-reducer");
 
 async function resolveFromAccumulator(acc, reducers) {

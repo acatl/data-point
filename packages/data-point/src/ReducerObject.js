@@ -1,17 +1,17 @@
-const isPlainObject = require('lodash/isPlainObject')
-const set = require('lodash/set')
-const cloneDeep = require('lodash/cloneDeep')
+const isPlainObject = require("lodash/isPlainObject");
+const set = require("lodash/set");
+const cloneDeep = require("lodash/cloneDeep");
 
-const { ReducerNative } = require('./ReducerNative')
+const { ReducerNative } = require("./ReducerNative");
 
 /**
  * @return {Object}
  */
-function newProps () {
+function newProps() {
   return {
     constants: {},
     reducers: []
-  }
+  };
 }
 
 /**
@@ -21,49 +21,49 @@ function newProps () {
  * @param {Object} props
  * @returns {Array}
  */
-function getProps (createReducer, source, stack = [], props = newProps()) {
+function getProps(createReducer, source, stack = [], props = newProps()) {
   for (const key of Object.keys(source)) {
-    const path = stack.concat(key)
-    const value = source[key]
+    const path = stack.concat(key);
+    const value = source[key];
     if (isPlainObject(value)) {
       // NOTE: recursive call
-      getProps(createReducer, value, path, props)
-      continue
+      getProps(createReducer, value, path, props);
+      continue;
     }
 
-    const reducer = createReducer(value)
-    if (reducer.type === 'ReducerConstant') {
-      set(props.constants, path, reducer.value)
+    const reducer = createReducer(value);
+    if (reducer.type === "ReducerConstant") {
+      set(props.constants, path, reducer.value);
     } else {
-      props.reducers.push({ path, reducer })
+      props.reducers.push({ path, reducer });
     }
   }
 
-  return props
+  return props;
 }
 
 /**
  * @param {Object} source
  * @return {Function}
  */
-function getSourceFunction (source) {
-  const fn = () => cloneDeep(source)
-  Object.defineProperty(fn, 'name', { value: 'source' })
-  return fn
+function getSourceFunction(source) {
+  const fn = () => cloneDeep(source);
+  Object.defineProperty(fn, "name", { value: "source" });
+  return fn;
 }
 
 class ReducerObject extends ReducerNative {
   constructor(spec, createReducer) {
-    super('object', undefined, spec)
+    super("object", undefined, spec);
 
-    const props = getProps(createReducer, spec)
+    const props = getProps(createReducer, spec);
 
-    this.source = getSourceFunction(props.constants)
-    this.reducers = props.reducers
+    this.source = getSourceFunction(props.constants);
+    this.reducers = props.reducers;
   }
 
   static isType(spec) {
-    return isPlainObject(spec)
+    return isPlainObject(spec);
   }
 
   /**
@@ -74,19 +74,21 @@ class ReducerObject extends ReducerNative {
    * @returns {Promise}
    */
   async resolve(accumulator, resolveReducer) {
-    const reducers = this.reducers
-    const result = this.source()
+    const reducers = this.reducers;
+    const result = this.source();
 
     if (reducers.length === 0) {
-      return result
+      return result;
     }
 
-    await Promise.all(reducers.map(async ({reducer, path}) => {
-      const value = await resolveReducer(accumulator, reducer)
-      set(result, path, value)
-    }))
+    await Promise.all(
+      reducers.map(async ({ reducer, path }) => {
+        const value = await resolveReducer(accumulator, reducer);
+        set(result, path, value);
+      })
+    );
 
-    return result
+    return result;
   }
 }
 
@@ -95,4 +97,4 @@ module.exports = {
   getProps,
   getSourceFunction,
   ReducerObject
-}
+};
