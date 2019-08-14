@@ -4,7 +4,7 @@ const Resolve = require("./resolve-reducer");
 
 async function resolveFromAccumulator(acc, reducers) {
   const parsedReducers = createReducer(reducers);
-  return await Resolve.resolve(acc, parsedReducers);
+  return Resolve.resolve(acc, parsedReducers);
 }
 
 async function resolver(input, reducers, options = {}) {
@@ -12,14 +12,11 @@ async function resolver(input, reducers, options = {}) {
     value: input,
     locals: options.locals,
     resolve: resolveFromAccumulator,
-    cache: options.cache
+    cache: options.cache,
+    tracer: options.tracer
   });
 
   const output = await resolveFromAccumulator(acc, reducers);
-
-  if (options.inspect === true) {
-    return acc.set("value", output);
-  }
 
   return output;
 }
@@ -32,16 +29,20 @@ class DataPoint {
     };
   }
 
-  resolve(input, reducer, options = {}) {
+  static create() {
+    return new DataPoint();
+  }
+
+  async resolve(input, reducer, options = {}) {
     return resolver(input, reducer, {
-      locals: options.locals,
-      cache: this.cache
+      cache: this.cache,
+      ...options
     });
   }
 }
 
-function datapoint(options) {
-  return new DataPoint(options);
-}
-
-module.exports = datapoint;
+module.exports = {
+  DataPoint,
+  resolveFromAccumulator,
+  resolver
+};

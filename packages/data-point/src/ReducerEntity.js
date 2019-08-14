@@ -49,10 +49,18 @@ class ReducerEntity extends Reducer {
 
     const cache = accumulator.cache;
 
-    if (cache.get) {
-      const cacheResult = await cache.get(acc.value, acc);
-      if (cacheResult !== undefined) {
-        return cacheResult;
+    // if (cache.get) {
+    //   const cacheResult = await cache.get(acc.value, acc);
+    //   if (cacheResult !== undefined) {
+    //     return cacheResult;
+    //   }
+    // }
+
+    let cacheResult;
+    if (typeof cache === "function") {
+      cacheResult = await cache(acc.value, acc);
+      if (cacheResult.value !== undefined) {
+        return cacheResult.value;
       }
     }
 
@@ -76,9 +84,13 @@ class ReducerEntity extends Reducer {
       await resolveReducer(acc, this.outputType);
     }
 
-    if (cache.set) {
-      await cache.set(acc.value, acc);
+    if (cacheResult) {
+      await cacheResult.miss(acc.value, acc);
     }
+
+    // if (cache.set) {
+    //   await cache.set(acc.value, acc);
+    // }
 
     return acc.value;
   }

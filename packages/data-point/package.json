@@ -1,5 +1,5 @@
 {
-  "name": "data-point",
+  "name": "@data-point/core",
   "version": "3.4.3",
   "description": "Data Processing and Transformation Utility",
   "main": "index.js",
@@ -13,7 +13,7 @@
     "url": "https://github.com/ViacomInc/data-point/issues"
   },
   "engines": {
-    "node": ">=8",
+    "node": ">=10",
     "npm": ">=2"
   },
   "author": {
@@ -22,16 +22,16 @@
   },
   "contributors": [
     {
+      "name": "Matthew Armstrong",
+      "email": "MatthewR.Armstrong@viacom.com"
+    },
+    {
       "name": "Fred Ghosn",
       "email": "fred.ghosn@viacomcontractor.com"
     },
     {
       "name": "Yinig Chen",
       "email": "Yining.Chen@viacom.com"
-    },
-    {
-      "name": "Matthew Armstrong",
-      "email": "MatthewR.Armstrong@viacom.com"
     }
   ],
   "keywords": [
@@ -41,11 +41,6 @@
     "functional",
     "compose",
     "aggregate"
-  ],
-  "files": [
-    "LICENSE",
-    "index.js",
-    "lib/"
   ],
   "dependencies": {
     "debug": "3.x",
