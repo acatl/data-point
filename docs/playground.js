@@ -11,18 +11,20 @@ const fs = require("fs");
 const myModel = DPModel({
   name: "myModel",
 
-  before: "$a",
+  uid: acc => `${acc.reducer.id}${acc.value.a.b}`,
 
-  value: ["$b", input => input.toUpperCase()],
-
-  after: DPIfThenElse({
-    if: input => input === "FOO",
-    then: () => {
-      // throw new Error("ohh");
-      return "foo yes!";
-    },
-    else: input => `foo no! got ${input}`
-  }),
+  value: [
+    "$a.b",
+    input => input.toUpperCase(),
+    DPIfThenElse({
+      if: input => input === "FOO",
+      then: () => {
+        // throw new Error("ohh");
+        return "foo yes!";
+      },
+      else: input => `foo no! got ${input}`
+    })
+  ],
 
   catch: error => {
     console.log(error); // eslint-disable-line
@@ -30,7 +32,6 @@ const myModel = DPModel({
   },
 
   params: {
-    uid: acc => `${acc.reducer.id}${acc.value.a.b}`,
     ttl: "20h"
   }
 });
@@ -43,19 +44,13 @@ async function main() {
 
   const store = new Map();
 
-  // via HOOK
-  async function cacheHook(input, acc) {
-    const uid = acc.reducer.params.uid(acc);
+  datapoint.cache.get = acc => {
+    return store.get(acc.uid);
+  };
 
-    return {
-      value: store.get(uid),
-      miss: (input, acc) => {
-        store.set(uid, input);
-      }
-    };
-  }
-
-  datapoint.cache = cacheHook;
+  datapoint.cache.set = acc => {
+    return store.set(acc.uid, acc.value);
+  };
 
   const input = [
     {
