@@ -20,6 +20,8 @@ class ReducerEntity extends Reducer {
 
     this.isEntityInstance = true;
 
+    this.uid = spec.uid;
+
     setReducerIfTruthy("before", this, spec);
     setReducerIfTruthy("value", this, spec);
     setReducerIfTruthy("after", this, spec);
@@ -43,24 +45,18 @@ class ReducerEntity extends Reducer {
   async resolveEntityValue(accumulator, resolveReducer) {
     let acc = accumulator;
 
+    acc.uid = this.uid ? this.uid(acc) : undefined;
+
     if (this.inputType) {
       await resolveReducer(acc, this.inputValue);
     }
 
     const cache = accumulator.cache;
 
-    // if (cache.get) {
-    //   const cacheResult = await cache.get(acc.value, acc);
-    //   if (cacheResult !== undefined) {
-    //     return cacheResult;
-    //   }
-    // }
-
-    let cacheResult;
-    if (typeof cache === "function") {
-      cacheResult = await cache(acc.value, acc);
-      if (cacheResult.value !== undefined) {
-        return cacheResult.value;
+    if (cache.get) {
+      const cacheResult = await cache.get(acc);
+      if (cacheResult !== undefined) {
+        return cacheResult;
       }
     }
 
@@ -84,13 +80,9 @@ class ReducerEntity extends Reducer {
       await resolveReducer(acc, this.outputType);
     }
 
-    if (cacheResult) {
-      await cacheResult.miss(acc.value, acc);
+    if (cache.set) {
+      await cache.set(acc);
     }
-
-    // if (cache.set) {
-    //   await cache.set(acc.value, acc);
-    // }
 
     return acc.value;
   }
