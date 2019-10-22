@@ -17,10 +17,16 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: install, lint, test
+    - name: install codecov
+      run: npm install -g codecov
+    - name: install dependencies
       run: |
         yarn install
+    - name: lint, test
+      run: |
         yarn lint
-        yarn test
+        yarn test -- --maxWorkers=4
       env:
         CI: true
+    - name: send codecov report
+      run: codecov
