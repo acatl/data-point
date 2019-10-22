@@ -84,7 +84,7 @@ describe('parse', () => {
     ).toMatchSnapshot()
   })
 
-  test('should throw error for invalid key inside compose', () => {
+  test.skip('should throw error for invalid key inside compose', () => {
     return expect(() =>
       parseCompose.parse('id', ['map'], {
         compose: [
@@ -96,7 +96,7 @@ describe('parse', () => {
     ).toThrowErrorMatchingSnapshot()
   })
 
-  test('should throw error when multiple keys are not inside compose', () => {
+  test.skip('should throw error when multiple keys are not inside compose', () => {
     return expect(() =>
       parseCompose.parse('id', ['map', 'find'], {
         map: '$a',
@@ -105,7 +105,7 @@ describe('parse', () => {
     ).toThrowErrorMatchingSnapshot()
   })
 
-  test('should throw error when the compose key and individual modifier keys are used together', () => {
+  test.skip('should throw error when the compose key and individual modifier keys are used together', () => {
     return expect(() =>
       parseCompose.parse('id', ['map', 'find'], {
         map: '$a',
